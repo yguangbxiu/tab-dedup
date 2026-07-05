@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Tab Dedup">
+  <rect width="128" height="128" rx="28" fill="#1a56db"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="9" d="M 32 46 V 38 Q 32 30 42 30 H 58 Q 68 30 68 38 V 84 H 32 Z"/>
+    <path stroke-width="10" d="M 50 64 V 54 Q 50 44 62 44 H 84 Q 96 44 96 54 V 100 H 50 Z"/>
+  </g>
+</svg>

@@ -42,6 +42,12 @@
 3. 在 `service-worker.js` 实现逻辑
 4. **同步**更新 `README.md` 与本文件「变更记录」
 
+## 扩展图标
+
+- **源文件**：`icons/icon-master.svg`（48/128）、`icons/icon-16.svg`（16px 加粗线条）
+- **导出**：`node scripts/generate-icons.mjs` → `icon16.png` / `icon48.png` / `icon128.png`
+- **设计**：蓝色底 `#1a56db` + 两个重叠 Tab 线条轮廓，表达「重复 Tab」
+
 ## Git 提交规范
 
 提交信息**英文在前、中文在后**（同一 commit message 内）：
@@ -63,6 +69,7 @@ Sync v1.1.0 features into README and add change log in PROJECT-MAINTENANCE.md.
 ## 变更记录
 
 ### 2026-07-05
+- **[资源]** 图标改为极简线条：两个重叠 Tab 轮廓（SVG 源 + `generate-icons.mjs` 导出 PNG）；16px 使用加粗专用版
 - **[文档]** 补全 README：复制 Tab 排除、tab-origin、popup、键盘快捷键、架构与测试清单；新增本维护文档、docs-sync / commit-messages 项目规则
 - **[文档]** 确立双语提交规范（英文 subject + 中文说明）
 - **[新增]** 快捷设置弹窗、复制 Tab 检测（`tab-origin.js`）、空 Tab 查重、同站点阈值、横幅键盘快捷键（Y/1、N/2）；默认自动关闭改为 5 秒

@@ -257,7 +257,7 @@ Service Worker 维护以下内存状态（Tab 关闭时自动清理）：
 ```
 chrome-tab-dedup/
 ├── manifest.json                 # 扩展清单（MV3）
-├── icons/                        # 扩展图标（16 / 48 / 128）
+├── icons/                        # 扩展图标（SVG 源 + 16/48/128 PNG；双 Tab 线条轮廓）
 ├── src/
 │   ├── background/
 │   │   └── service-worker.js     # 后台：导航监听、查重、关闭、消息路由
