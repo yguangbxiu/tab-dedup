@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Dedup 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Tab Dedup 设置</h1>
+    <p class="intro">检测当前窗口中的同域名 Tab。当你新开 Tab 访问相同域名时，询问是否关闭其他 Tab，默认保留当前 Tab。</p>
+
+    <form id="settings-form">
+      <section class="card">
+        <h2>关闭提示</h2>
+        <div class="field">
+          <label class="inline-field">
+            <input type="checkbox" id="askAutoCloseEnabled">
+            超时后自动关闭同域名 Tab
+          </label>
+          <div class="inline-field timeout-row">
+            <span>超时时间（秒）</span>
+            <input type="number" id="askAutoCloseSeconds" min="1" max="30" step="1">
+          </div>
+          <p class="hint">在新 Tab 顶部显示询问横幅；无操作或选择「是」后，将关闭当前窗口内其他同匹配规则的 Tab。</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>URL 匹配规则</h2>
+        <div class="field">
+          <div class="radio-group">
+            <label class="radio-item">
+              <input type="radio" name="matchMode" value="domainOnly">
+              <span>
+                <strong>仅比较域名</strong><br>
+                <span class="hint">同一域名下的不同路径视为重复，例如 /login 与 /application/index。</span>
+              </span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="matchMode" value="strict">
+              <span>
+                <strong>完整 URL 一致</strong><br>
+                <span class="hint">协议、域名、路径、查询参数和 hash 全部相同才视为重复。</span>
+              </span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="matchMode" value="ignoreHash">
+              <span>
+                <strong>忽略 hash</strong><br>
+                <span class="hint">忽略 # 后面的部分，例如同一页面的不同锚点视为相同。</span>
+              </span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="matchMode" value="ignoreQueryHash">
+              <span>
+                <strong>忽略 query 和 hash</strong><br>
+                <span class="hint">仅比较协议 + 域名 + 路径。</span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>域名过滤</h2>
+        <div class="field">
+          <label for="whitelist">白名单（每行一个域名，仅检测名单内域名）</label>
+          <textarea id="whitelist" placeholder="github.com&#10;docs.google.com"></textarea>
+          <p class="hint">填写后，仅对白名单中的域名生效；留空表示不启用白名单限制。</p>
+        </div>
+        <div class="field">
+          <label for="blacklist">黑名单（每行一个域名，仅检测名单内域名）</label>
+          <textarea id="blacklist" placeholder="example.com"></textarea>
+          <p class="hint">留空表示检测所有 http/https 页面；与白名单同时填写时，白名单优先。</p>
+        </div>
+        <div class="warning">
+          当前版本仅在<strong>当前窗口</strong>内查找同域名 Tab。中键 / Ctrl+点击打开的新 Tab 也会被检测；同 Tab 内地址栏跳转不会触发。
+        </div>
+      </section>
+
+      <div class="actions">
+        <button type="submit" id="save-btn">保存设置</button>
+        <span id="status" aria-live="polite"></span>
+      </div>
+    </form>
+  </div>
+
+  <script src="../utils/defaults.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>
