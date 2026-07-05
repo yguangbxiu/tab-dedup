@@ -6,7 +6,9 @@ desktop.ini
 # Editor / IDE
 .vscode/
 .idea/
-.cursor/
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 *.swp
 *.swo
 *~

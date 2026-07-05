@@ -1,0 +1,26 @@
+---
+description: Tab Dedup 代码与 README/维护文档必须同步更新
+alwaysApply: true
+---
+
+# 文档与代码同步（Tab Dedup）
+
+修改或新增本项目代码时，**同一任务内**同步更新文档，不得延后。
+
+## 文档分工
+
+| 文件 | 用途 |
+|------|------|
+| `README.md` | 用户指南 + 架构说明 + 测试清单 |
+| `docs/PROJECT-MAINTENANCE.md` | 维护者速查、扩展指南、变更记录 |
+
+## 必须同步的变更
+
+- 新配置项 / 默认值 → README「配置项」+ `defaults.js` 说明
+- 新模块或文件 → README「目录结构」与「架构」
+- 行为逻辑变更 → README 对应章节；过时描述立即删除
+- 每次功能改动 → `docs/PROJECT-MAINTENANCE.md`「变更记录」追加一条
+
+## 完成前自检
+
+对照代码 diff，确认 README 与 PROJECT-MAINTENANCE 中均有准确描述，且无计划外/未实现内容。

@@ -1,0 +1,22 @@
+---
+description: Git 提交信息使用英文为主、末尾附中文对应说明
+alwaysApply: true
+---
+
+# 双语提交信息（Tab Dedup）
+
+创建 git commit 时，提交说明**必须包含英文与中文**：
+
+1. **第一行（subject）**：英文，祈使句，≤72 字符；可选 Conventional Commits 前缀（`feat:`、`fix:`、`docs:` 等）
+2. **正文**：英文简述变更内容与原因（如有必要）
+3. **空一行后**：中文对应说明（与英文含义一致，可略简）
+
+## 示例
+
+```
+docs: complete README and add maintenance documentation
+
+Sync v1.1.0 features into README and add PROJECT-MAINTENANCE.md with change log.
+
+文档：补全 README 与维护文档，覆盖 v1.1.0 功能说明并新增变更记录。
+```
