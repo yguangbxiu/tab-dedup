@@ -20,7 +20,10 @@ function readForm() {
     whitelist: document.getElementById('whitelist').value,
     blacklist: document.getElementById('blacklist').value,
     askAutoCloseEnabled: document.getElementById('askAutoCloseEnabled').checked,
-    askAutoCloseSeconds: Number(document.getElementById('askAutoCloseSeconds').value) || DEFAULT_SETTINGS.askAutoCloseSeconds
+    askAutoCloseSeconds: Number(document.getElementById('askAutoCloseSeconds').value) || DEFAULT_SETTINGS.askAutoCloseSeconds,
+    checkEmptyTabs: document.getElementById('checkEmptyTabs').checked,
+    excludeDuplicatedTabs: getSelectedRadio('excludeDuplicatedTabs') === 'true',
+    sameSiteTabLimit: Number(document.getElementById('sameSiteTabLimit').value) || DEFAULT_SETTINGS.sameSiteTabLimit
   };
 }
 
@@ -30,6 +33,9 @@ function fillForm(settings) {
   document.getElementById('blacklist').value = settings.blacklist || '';
   document.getElementById('askAutoCloseEnabled').checked = Boolean(settings.askAutoCloseEnabled);
   document.getElementById('askAutoCloseSeconds').value = settings.askAutoCloseSeconds;
+  document.getElementById('checkEmptyTabs').checked = Boolean(settings.checkEmptyTabs);
+  setSelectedRadio('excludeDuplicatedTabs', String(Boolean(settings.excludeDuplicatedTabs)));
+  document.getElementById('sameSiteTabLimit').value = settings.sameSiteTabLimit;
 }
 
 function showStatus(message) {
@@ -52,6 +58,7 @@ form.addEventListener('submit', async (event) => {
 
   const settings = readForm();
   settings.askAutoCloseSeconds = Math.min(30, Math.max(1, settings.askAutoCloseSeconds));
+  settings.sameSiteTabLimit = Math.min(20, Math.max(1, Math.round(settings.sameSiteTabLimit)));
 
   await chrome.storage.sync.set(settings);
   fillForm(settings);

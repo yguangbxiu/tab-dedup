@@ -25,6 +25,34 @@
           </div>
           <p class="hint">在新 Tab 顶部显示询问横幅；无操作或选择「是」后，将关闭当前窗口内其他同匹配规则的 Tab。</p>
         </div>
+        <div class="field">
+          <label class="inline-field">
+            <input type="checkbox" id="checkEmptyTabs">
+            空 Tab 参与查重
+          </label>
+          <p class="hint">开启后，多个新标签页 / about:blank 也会触发提醒；部分浏览器内部页可能仅显示系统通知。</p>
+        </div>
+        <div class="field">
+          <label>复制的 tab 不参与域名 tab 重复校验</label>
+          <div class="radio-group inline-radio">
+            <label class="radio-item">
+              <input type="radio" name="excludeDuplicatedTabs" value="true">
+              <span>是</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="excludeDuplicatedTabs" value="false">
+              <span>否</span>
+            </label>
+          </div>
+          <p class="hint">开启后，通过浏览器「复制标签页」打开的 Tab 不会触发查重，也不会被当作重复目标关闭。新 Tab 输入网址仍会正常查重。</p>
+        </div>
+        <div class="field">
+          <label for="sameSiteTabLimit">同站点 Tab 超过几个时提醒</label>
+          <div class="inline-field timeout-row">
+            <input type="number" id="sameSiteTabLimit" min="1" max="20" step="1">
+          </div>
+          <p class="hint">例如设为 3 表示 3 个以内不提醒，第 4 个才提醒。默认 1 表示有 1 个重复 Tab 即提醒。</p>
+        </div>
       </section>
 
       <section class="card">

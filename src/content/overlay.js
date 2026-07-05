@@ -6,6 +6,7 @@
   let countdownTimer = null;
   let toastTimer = null;
   let promptGeneration = 0;
+  let promptKeydownHandler = null;
 
   function removeToast() {
     if (toastTimer) {
@@ -24,9 +25,24 @@
       clearInterval(countdownTimer);
       countdownTimer = null;
     }
+    if (promptKeydownHandler) {
+      document.removeEventListener('keydown', promptKeydownHandler, true);
+      promptKeydownHandler = null;
+    }
     const host = document.getElementById('tab-dedup-overlay-host');
     if (host) {
       host.remove();
+    }
+  }
+
+  function handlePromptKeydown(event) {
+    const key = event.key;
+    if (key === '1' || key === 'y' || key === 'Y') {
+      event.preventDefault();
+      sendChoice('close');
+    } else if (key === '2' || key === 'n' || key === 'N') {
+      event.preventDefault();
+      sendChoice('keep');
     }
   }
 
@@ -93,6 +109,9 @@
     banner.appendChild(actions);
     host.appendChild(banner);
     document.documentElement.appendChild(host);
+
+    promptKeydownHandler = handlePromptKeydown;
+    document.addEventListener('keydown', promptKeydownHandler, true);
 
     if (payload.autoCloseEnabled && payload.autoCloseSeconds > 0) {
       let remaining = payload.autoCloseSeconds;

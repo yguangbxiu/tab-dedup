@@ -85,6 +85,11 @@ label {
   gap: 10px;
 }
 
+.radio-group.inline-radio {
+  flex-direction: row;
+  gap: 20px;
+}
+
 .radio-item {
   display: flex;
   align-items: flex-start;

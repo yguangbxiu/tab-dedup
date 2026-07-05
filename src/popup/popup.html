@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tab Dedup</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <h1>Tab Dedup</h1>
+    <p class="intro">快捷设置</p>
+
+    <form id="settings-form">
+      <div class="field">
+        <label for="askAutoCloseSeconds">重复 Tab 提示后自动关闭（秒）</label>
+        <input type="number" id="askAutoCloseSeconds" min="1" max="30" step="1">
+        <p class="hint">无操作时，倒计时结束后自动关闭其他同站点 Tab。</p>
+      </div>
+
+      <div class="field">
+        <label class="inline-field">
+          <input type="checkbox" id="checkEmptyTabs">
+          空 Tab 参与查重
+        </label>
+        <p class="hint">开启后，多个新标签页 / about:blank 也会触发提醒。部分浏览器内部页可能仅显示系统通知。</p>
+      </div>
+
+      <div class="field">
+        <label for="sameSiteTabLimit">同站点 Tab 超过几个时提醒</label>
+        <input type="number" id="sameSiteTabLimit" min="1" max="20" step="1">
+        <p class="hint">例如设为 3 表示 3 个以内不提醒，第 4 个才提醒。</p>
+      </div>
+
+      <div class="actions">
+        <button type="submit" id="save-btn">保存</button>
+        <span id="status" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <button type="button" id="open-options" class="link-btn">完整设置 →</button>
+  </div>
+
+  <script src="../utils/defaults.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

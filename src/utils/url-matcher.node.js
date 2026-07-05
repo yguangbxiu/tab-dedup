@@ -1,3 +1,15 @@
+function isEmptyTabUrl(url) {
+  if (!url) {
+    return true;
+  }
+
+  return (
+    url === 'about:blank' ||
+    url.startsWith('chrome://newtab') ||
+    url.startsWith('edge://newtab')
+  );
+}
+
 function normalizeUrl(url, mode) {
   try {
     const parsed = new URL(url);
@@ -31,6 +43,7 @@ function urlsMatch(urlA, urlB, mode) {
 }
 
 module.exports = {
+  isEmptyTabUrl,
   normalizeUrl,
   urlsMatch
 };
