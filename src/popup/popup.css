@@ -39,9 +39,37 @@ h1 {
 }
 
 .intro {
-  margin: 4px 0 16px;
+  margin: 4px 0 12px;
   font-size: 13px;
   color: var(--muted);
+}
+
+.quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.quick-action-btn {
+  width: 100%;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.quick-action-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.quick-action-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .field {

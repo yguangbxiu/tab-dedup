@@ -3,11 +3,38 @@ function isEmptyTabUrl(url) {
     return true;
   }
 
+  if (url === 'about:blank') {
+    return true;
+  }
+
+  const lower = url.toLowerCase();
   return (
-    url === 'about:blank' ||
-    url.startsWith('chrome://newtab') ||
-    url.startsWith('edge://newtab')
+    lower.startsWith('chrome://newtab') ||
+    lower.startsWith('chrome://new-tab-page') ||
+    lower.startsWith('edge://newtab') ||
+    lower.startsWith('edge://new-tab-page') ||
+    lower.startsWith('chrome-untrusted://new-tab-page') ||
+    lower.startsWith('chrome-untrusted://newtab') ||
+    lower.startsWith('about:newtab')
   );
+}
+
+function shouldUseHostKey(hostname) {
+  const h = hostname.toLowerCase();
+  if (h === 'localhost') {
+    return true;
+  }
+  if (h.startsWith('[')) {
+    return true;
+  }
+  return /^(?:\d{1,3}\.){3}\d{1,3}$/.test(h);
+}
+
+function getDomainOnlyKey(parsed) {
+  if (shouldUseHostKey(parsed.hostname)) {
+    return parsed.host;
+  }
+  return parsed.hostname;
 }
 
 function normalizeUrl(url, mode) {
@@ -15,7 +42,7 @@ function normalizeUrl(url, mode) {
     const parsed = new URL(url);
 
     if (mode === 'domainOnly') {
-      return parsed.hostname;
+      return getDomainOnlyKey(parsed);
     }
 
     if (mode === 'ignoreHash') {

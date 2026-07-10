@@ -123,14 +123,22 @@ textarea {
   margin-top: 10px;
 }
 
-input[type="number"] {
-  width: 72px;
+input[type="number"],
+select {
   padding: 8px 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: transparent;
   color: inherit;
   font: inherit;
+}
+
+input[type="number"] {
+  width: 72px;
+}
+
+select {
+  min-width: 160px;
 }
 
 .actions {

@@ -9,21 +9,59 @@
 <body>
   <div class="container">
     <h1>Tab Dedup 设置</h1>
-    <p class="intro">检测当前窗口中的同域名 Tab。当你新开 Tab 访问相同域名时，询问是否关闭其他 Tab，默认保留当前 Tab。</p>
+    <p class="intro">检测当前窗口中的重复 Tab。当你新开 Tab 访问相同域名时，提供清理、整理到分组或忽略三选项。</p>
 
     <form id="settings-form">
       <section class="card">
-        <h2>关闭提示</h2>
+        <h2>重复 Tab 提示</h2>
         <div class="field">
           <label class="inline-field">
             <input type="checkbox" id="askAutoCloseEnabled">
-            超时后自动关闭同域名 Tab
+            超时后自动执行
           </label>
           <div class="inline-field timeout-row">
             <span>超时时间（秒）</span>
             <input type="number" id="askAutoCloseSeconds" min="1" max="30" step="1">
           </div>
-          <p class="hint">在新 Tab 顶部显示询问横幅；无操作或选择「是」后，将关闭当前窗口内其他同匹配规则的 Tab。</p>
+          <p class="hint">检测到重复 Tab 时弹出浮动卡片，提供清理、整理到分组、忽略三选项；无操作时可按下方默认操作自动执行。</p>
+        </div>
+        <div class="field">
+          <label>超时默认操作</label>
+          <div class="radio-group inline-radio">
+            <label class="radio-item">
+              <input type="radio" name="autoActionOnTimeout" value="close">
+              <span>清理（关闭重复 Tab）</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="autoActionOnTimeout" value="organize">
+              <span>整理（归入 Tab 分组）</span>
+            </label>
+            <label class="radio-item">
+              <input type="radio" name="autoActionOnTimeout" value="none">
+              <span>无操作</span>
+            </label>
+          </div>
+          <p class="hint">倒计时结束后自动执行的操作。设为「无操作」时不启动倒计时。</p>
+        </div>
+        <div class="field">
+          <label for="promptPosition">提示位置</label>
+          <select id="promptPosition">
+            <option value="topLeft">左上角</option>
+            <option value="topRight">右上角</option>
+            <option value="topCenter">顶部居中</option>
+            <option value="bottomLeft">左下角</option>
+            <option value="bottomRight">右下角</option>
+            <option value="center">中央</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="promptSize">提示大小</label>
+          <select id="promptSize">
+            <option value="small">小</option>
+            <option value="medium">中</option>
+            <option value="large">大</option>
+          </select>
+          <p class="hint">卡片为半透明样式，仅占用局部区域，不会阻挡页面其余部分的点击。</p>
         </div>
         <div class="field">
           <label class="inline-field">
@@ -53,6 +91,11 @@
           </div>
           <p class="hint">例如设为 3 表示 3 个以内不提醒，第 4 个才提醒。默认 1 表示有 1 个重复 Tab 即提醒。</p>
         </div>
+        <div class="field">
+          <label for="domainTabLimits">按域名自定义提醒阈值（每行：域名或 URL,阈值）</label>
+          <textarea id="domainTabLimits" placeholder="https://alidocs.dingtalk.com/,3&#10;github.com,5"></textarea>
+          <p class="hint">覆盖上方全局阈值；例如 3 表示该域名 3 个以内不提醒，第 4 个才提醒。未列出的域名仍用全局阈值（批量扫描未配置时仍为 2 个即视为重复）。</p>
+        </div>
       </section>
 
       <section class="card">
@@ -63,7 +106,7 @@
               <input type="radio" name="matchMode" value="domainOnly">
               <span>
                 <strong>仅比较域名</strong><br>
-                <span class="hint">同一域名下的不同路径视为重复，例如 /login 与 /application/index。</span>
+                <span class="hint">同一域名下的不同路径视为重复，例如 /login 与 /application/index。IP 地址与 localhost 按 host（含端口）区分，例如 192.168.1.1:8080 与 :9090 不视为重复。</span>
               </span>
             </label>
             <label class="radio-item">
@@ -94,14 +137,19 @@
       <section class="card">
         <h2>域名过滤</h2>
         <div class="field">
-          <label for="whitelist">白名单（每行一个域名，仅检测名单内域名）</label>
-          <textarea id="whitelist" placeholder="github.com&#10;docs.google.com"></textarea>
-          <p class="hint">填写后，仅对白名单中的域名生效；留空表示不启用白名单限制。</p>
+          <label for="whitelist">白名单（每行一个域名或 URL，仅检测名单内域名）</label>
+          <textarea id="whitelist" placeholder="github.com&#10;https://docs.google.com"></textarea>
+          <p class="hint">可填写裸域名（如 github.com）或完整 URL（如 https://github.com/repo）；每行一个，也支持逗号分隔。填写后，仅对白名单中的域名生效；留空表示不启用白名单限制。可与黑名单同时使用。</p>
         </div>
         <div class="field">
-          <label for="blacklist">黑名单（每行一个域名，仅检测名单内域名）</label>
-          <textarea id="blacklist" placeholder="example.com"></textarea>
-          <p class="hint">留空表示检测所有 http/https 页面；与白名单同时填写时，白名单优先。</p>
+          <label for="blacklist">黑名单（每行一个域名或 URL，忽略名单内域名的重复检测）</label>
+          <textarea id="blacklist" placeholder="example.com&#10;https://example.com/path"></textarea>
+          <p class="hint">可填写裸域名或完整 URL。填写后，黑名单中的域名不参与查重；可与白名单同时使用（先限定白名单范围，再排除黑名单）。</p>
+        </div>
+        <div class="field">
+          <label for="autoGroupDomains">自动分组域名（每行一个域名或 URL，自动归入 Tab 分组，不参与去重）</label>
+          <textarea id="autoGroupDomains" placeholder="github.com&#10;https://stackoverflow.com"></textarea>
+          <p class="hint">可填写裸域名或完整 URL。填写后，名单内域名超过同站点阈值时自动归入 Tab 分组（静默，不弹出提示）；新 Tab 会并入同窗口内已有的同域名分组。不参与双击扫描、一键去重/分组。可与白名单同时使用；黑名单优先（在黑名单内的域名不会自动分组）。</p>
         </div>
         <div class="warning">
           当前版本仅在<strong>当前窗口</strong>内查找同域名 Tab。中键 / Ctrl+点击打开的新 Tab 也会被检测；同 Tab 内地址栏跳转不会触发。

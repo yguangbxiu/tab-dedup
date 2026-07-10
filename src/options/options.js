@@ -19,11 +19,16 @@ function readForm() {
     matchMode: getSelectedRadio('matchMode') || DEFAULT_SETTINGS.matchMode,
     whitelist: document.getElementById('whitelist').value,
     blacklist: document.getElementById('blacklist').value,
+    autoGroupDomains: document.getElementById('autoGroupDomains').value,
     askAutoCloseEnabled: document.getElementById('askAutoCloseEnabled').checked,
     askAutoCloseSeconds: Number(document.getElementById('askAutoCloseSeconds').value) || DEFAULT_SETTINGS.askAutoCloseSeconds,
+    autoActionOnTimeout: getSelectedRadio('autoActionOnTimeout') || DEFAULT_SETTINGS.autoActionOnTimeout,
     checkEmptyTabs: document.getElementById('checkEmptyTabs').checked,
     excludeDuplicatedTabs: getSelectedRadio('excludeDuplicatedTabs') === 'true',
-    sameSiteTabLimit: Number(document.getElementById('sameSiteTabLimit').value) || DEFAULT_SETTINGS.sameSiteTabLimit
+    sameSiteTabLimit: Number(document.getElementById('sameSiteTabLimit').value) || DEFAULT_SETTINGS.sameSiteTabLimit,
+    domainTabLimits: document.getElementById('domainTabLimits').value,
+    promptPosition: document.getElementById('promptPosition').value || DEFAULT_SETTINGS.promptPosition,
+    promptSize: document.getElementById('promptSize').value || DEFAULT_SETTINGS.promptSize
   };
 }
 
@@ -31,11 +36,16 @@ function fillForm(settings) {
   setSelectedRadio('matchMode', settings.matchMode);
   document.getElementById('whitelist').value = settings.whitelist || '';
   document.getElementById('blacklist').value = settings.blacklist || '';
+  document.getElementById('autoGroupDomains').value = settings.autoGroupDomains || '';
   document.getElementById('askAutoCloseEnabled').checked = Boolean(settings.askAutoCloseEnabled);
   document.getElementById('askAutoCloseSeconds').value = settings.askAutoCloseSeconds;
+  setSelectedRadio('autoActionOnTimeout', settings.autoActionOnTimeout || DEFAULT_SETTINGS.autoActionOnTimeout);
   document.getElementById('checkEmptyTabs').checked = Boolean(settings.checkEmptyTabs);
   setSelectedRadio('excludeDuplicatedTabs', String(Boolean(settings.excludeDuplicatedTabs)));
   document.getElementById('sameSiteTabLimit').value = settings.sameSiteTabLimit;
+  document.getElementById('domainTabLimits').value = settings.domainTabLimits || '';
+  document.getElementById('promptPosition').value = settings.promptPosition || DEFAULT_SETTINGS.promptPosition;
+  document.getElementById('promptSize').value = settings.promptSize || DEFAULT_SETTINGS.promptSize;
 }
 
 function showStatus(message) {

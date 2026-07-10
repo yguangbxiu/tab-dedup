@@ -43,4 +43,48 @@ assert.strictEqual(
   false
 );
 
+assert.strictEqual(
+  urlsMatch(
+    'http://192.168.20.50:30847/xxxx',
+    'http://192.168.20.50:30848/yyyy',
+    'domainOnly'
+  ),
+  false
+);
+assert.strictEqual(
+  urlsMatch(
+    'http://192.168.20.50:30847/a',
+    'http://192.168.20.50:30847/b',
+    'domainOnly'
+  ),
+  true
+);
+assert.strictEqual(
+  urlsMatch('http://example.com:8080/a', 'http://example.com:9090/b', 'domainOnly'),
+  true
+);
+assert.strictEqual(
+  urlsMatch('http://localhost:3000/a', 'http://localhost:4000/b', 'domainOnly'),
+  false
+);
+assert.strictEqual(
+  urlsMatch('http://[::1]:8080/a', 'http://[::1]:8081/b', 'domainOnly'),
+  false
+);
+assert.strictEqual(
+  normalizeUrl('http://192.168.20.50:30847/xxxx', 'domainOnly'),
+  '192.168.20.50:30847'
+);
+assert.strictEqual(normalizeUrl('https://example.com:8080/page', 'domainOnly'), 'example.com');
+
+const { isEmptyTabUrl } = require('../src/utils/url-matcher.node.js');
+
+assert.strictEqual(isEmptyTabUrl(''), true);
+assert.strictEqual(isEmptyTabUrl('about:blank'), true);
+assert.strictEqual(isEmptyTabUrl('chrome://newtab/'), true);
+assert.strictEqual(isEmptyTabUrl('chrome://new-tab-page/'), true);
+assert.strictEqual(isEmptyTabUrl('chrome-untrusted://new-tab-page/'), true);
+assert.strictEqual(isEmptyTabUrl('edge://newtab/'), true);
+assert.strictEqual(isEmptyTabUrl('https://example.com'), false);
+
 console.log('url-matcher.test.js: all passed');

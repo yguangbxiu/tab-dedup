@@ -1,10 +1,11 @@
 #tab-dedup-overlay-host {
   all: initial;
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0;
   z-index: 2147483647;
+  display: flex;
+  padding: 12px;
+  pointer-events: none;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -12,15 +13,64 @@
   box-sizing: border-box;
 }
 
+#tab-dedup-overlay-host.tab-dedup-pos-topLeft {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+#tab-dedup-overlay-host.tab-dedup-pos-topRight {
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+#tab-dedup-overlay-host.tab-dedup-pos-topCenter {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+#tab-dedup-overlay-host.tab-dedup-pos-bottomLeft {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+#tab-dedup-overlay-host.tab-dedup-pos-bottomRight {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+#tab-dedup-overlay-host.tab-dedup-pos-center {
+  align-items: center;
+  justify-content: center;
+}
+
 .tab-dedup-banner {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px 20px;
-  background: linear-gradient(135deg, #1a56db 0%, #1e429f 100%);
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: auto;
+  width: auto;
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(26, 86, 219, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.tab-dedup-size-small {
+  max-width: min(320px, calc(100vw - 24px));
+  padding: 8px 10px;
+}
+
+.tab-dedup-size-medium {
+  max-width: min(360px, calc(100vw - 24px));
+  padding: 10px 14px;
+}
+
+.tab-dedup-size-large {
+  max-width: min(440px, calc(100vw - 24px));
+  padding: 12px 16px;
 }
 
 .tab-dedup-text {
@@ -28,14 +78,28 @@
   min-width: 0;
 }
 
-.tab-dedup-title {
+.tab-dedup-size-small .tab-dedup-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 2px;
+  line-height: 1.35;
+}
+
+.tab-dedup-size-medium .tab-dedup-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 0 3px;
+  line-height: 1.4;
+}
+
+.tab-dedup-size-large .tab-dedup-title {
   font-size: 14px;
   font-weight: 600;
   margin: 0 0 4px;
+  line-height: 1.4;
 }
 
 .tab-dedup-subtitle {
-  font-size: 12px;
   opacity: 0.9;
   margin: 0;
   white-space: nowrap;
@@ -43,20 +107,46 @@
   text-overflow: ellipsis;
 }
 
+.tab-dedup-size-small .tab-dedup-subtitle {
+  font-size: 11px;
+}
+
+.tab-dedup-size-medium .tab-dedup-subtitle {
+  font-size: 12px;
+}
+
+.tab-dedup-size-large .tab-dedup-subtitle {
+  font-size: 12px;
+}
+
 .tab-dedup-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
   flex-shrink: 0;
 }
 
 .tab-dedup-btn {
   border: none;
   border-radius: 6px;
-  padding: 8px 14px;
-  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.15s ease;
+}
+
+.tab-dedup-size-small .tab-dedup-btn {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+
+.tab-dedup-size-medium .tab-dedup-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.tab-dedup-size-large .tab-dedup-btn {
+  padding: 8px 14px;
+  font-size: 13px;
 }
 
 .tab-dedup-btn-primary {
@@ -89,6 +179,10 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+#tab-dedup-toast-host.tab-dedup-toast-interactive {
+  pointer-events: auto;
+}
+
 #tab-dedup-toast-host * {
   box-sizing: border-box;
 }
@@ -107,6 +201,32 @@
   opacity: 0;
   transform: translateY(8px) scale(0.98);
   animation: tab-dedup-toast-in 0.2s ease forwards;
+}
+
+.tab-dedup-toast-message {
+  display: block;
+}
+
+.tab-dedup-toast-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.tab-dedup-toast-btn {
+  padding: 6px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.tab-dedup-toast-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .tab-dedup-toast.tab-dedup-toast-out {
