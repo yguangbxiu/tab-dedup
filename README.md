@@ -52,6 +52,7 @@ Chrome 扩展（Manifest V3），用于在**当前窗口**内检测重复的 Tab
 - **跨窗口**：其他窗口中的同域名 Tab 不会被检测或关闭
 - **非 HTTP(S) 页面**：`chrome://`、`about:`、`file://` 等内部页面不参与
 - **已在 Tab 分组中**：当前 Tab 或窗口内其他匹配 Tab 若已在 Chrome Tab 分组内，不参与查重（整理到分组后不再重复提醒）
+- **固定/置顶 Tab**：`tab.pinned` 为 true 的 Tab 不参与查重、关闭、整理与自动分组
 - **用户已忽略**：在当前 Tab 上对同一匹配键（归一化 URL）点击「忽略」后，该 Tab 不再重复询问
 - **域名被过滤**：当前域名不在白名单内，或在黑名单内（见下方配置说明）
 - **自动分组域名**：名单内域名超过同站点阈值时自动归入 Tab 分组，不弹出查重提示（见下方配置说明）
@@ -75,7 +76,7 @@ Chrome 扩展（Manifest V3），用于在**当前窗口**内检测重复的 Tab
 | **一键去重** | 扫描重复 Tab 并关闭（等同双击扫描后选「清理」） | Toast「未发现重复 Tab」 |
 | **一键分组** | 扫描重复 Tab 并整理到分组（等同双击扫描后选「整理」） | Toast「未发现重复 Tab」 |
 
-规则与双击批量扫描一致：不受全局「同站点阈值」限制，但**已配置 per-domain 阈值的域名**在批量扫描中也会按该阈值过滤；空 Tab 始终参与；已在分组内的 Tab 不参与去重/分组扫描。一键分组成功后 Toast 约 8 秒内可点「取消」撤销。若当前 Tab 已有浮动卡片待处理，按钮会提示「当前 Tab 正在处理中」。
+规则与双击批量扫描一致：不受全局「同站点阈值」限制，但**已配置 per-domain 阈值的域名**在批量扫描中也会按该阈值过滤；空 Tab 始终参与；已在分组内或固定/置顶的 Tab 不参与去重/分组扫描。一键分组成功后 Toast 约 8 秒内可点「取消」撤销。若当前 Tab 已有浮动卡片待处理，按钮会提示「当前 Tab 正在处理中」。
 
 快捷设置弹窗（单击扩展图标）还可调整：超时时间、空 Tab 查重、同站点阈值。其余选项在完整设置页。
 
@@ -215,10 +216,10 @@ Service Worker 监听以下事件以覆盖不同类型的页面跳转：
 3. **读取设置**：从 `chrome.storage.sync` 加载并 merge 默认值
 4. **拒绝记忆**：若用户此前在该 Tab 上对当前归一化 URL 点了「忽略」（`dismissedPrompts`），跳过
 5. **复制 Tab 排除**：若开启 `excludeDuplicatedTabs`，等待 `tab-origin.js` 上报或相邻 Tab 探测完成；已标记为复制的 Tab 跳过
-6. **Tab 分组排除**：当前 Tab 或候选 Tab 已在 Chrome Tab 分组内则跳过
+6. **Tab 分组与固定 Tab 排除**：当前 Tab 已在 Chrome Tab 分组内或为固定/置顶 Tab 则跳过；匹配候选中分组内或固定 Tab 亦排除
 7. **域名过滤**：非空 Tab 时调用 `shouldSkipByDomain()` 检查白名单 / 黑名单
 8. **自动分组域名**：若 `shouldAutoGroupByDomain()` 命中，调用 `handleAutoGroupNavigation()` 静默归入 Tab 分组后返回，不弹出查重提示
-9. **窗口内匹配**：`chrome.tabs.query({ windowId })` 获取当前窗口所有 Tab，排除自身、分组内 Tab 与复制 Tab 后，用 `urlsMatchForDedup()` 逐一比较
+9. **窗口内匹配**：`chrome.tabs.query({ windowId })` 获取当前窗口所有 Tab，排除自身、分组内 Tab、固定 Tab 与复制 Tab 后，用 `urlsMatchForDedup()` 逐一比较
 10. **同站点阈值**：`getSameSiteTabLimitForHostname()` 查找 per-domain 配置（`domainTabLimits`），未命中则用全局 `sameSiteTabLimit`；`matches.length + 1 > limit` 时才继续（默认阈值为 1，即有一个重复即提醒）
 11. **展示提示**：调用 `showClosePrompt()`
 
@@ -402,6 +403,8 @@ node tests/domain-list.test.js
 24. 自动分组域名内的 Tab → 双击扫描 / 一键去重 / 一键分组均不包含该域名 Tab
 25. 按域名自定义阈值加入 `alidocs.dingtalk.com,3` → 该域名第 1–3 个 Tab 不提醒，第 4 个才出现提示；其他域名仍用全局阈值
 26. 同上配置 → 窗口内仅 3 个该域名 Tab 时双击扫描 →「未发现重复 Tab」；第 4 个 Tab 后双击扫描才出现提示
+27. 固定同域名 Tab 与普通 Tab 并存 → 固定 Tab 不计入重复数、不触发提示；批量去重不关闭固定 Tab
+28. 当前 Tab 为固定/置顶 → 导航到同域名页面不触发查重
 
 ### 调试建议
 

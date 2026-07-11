@@ -202,6 +202,10 @@ function isTabInGroup(tab) {
   return tab?.groupId !== undefined && tab.groupId !== TAB_GROUP_ID_NONE;
 }
 
+function isPinnedTab(tab) {
+  return Boolean(tab?.pinned);
+}
+
 async function ensureActionPopupDisabled() {
   await chrome.action.setPopup({ popup: '' });
 }
@@ -233,7 +237,7 @@ function getBulkScanDedupKey(url, settings) {
 }
 
 function shouldIncludeTabInBulkScan(tab, settings) {
-  if (isTabInGroup(tab)) {
+  if (isTabInGroup(tab) || isPinnedTab(tab)) {
     return false;
   }
 
@@ -492,6 +496,7 @@ async function handleAutoGroupNavigation(tabId, tab, url, settings) {
   const matchingTabs = tabsInWindow.filter(
     (candidate) =>
       candidate.id !== tabId &&
+      !isPinnedTab(candidate) &&
       !processingTabs.has(candidate.id) &&
       !isExcludedDuplicatedTab(candidate.id, settings) &&
       isCheckableUrl(candidate.url, settings) &&
@@ -1103,6 +1108,7 @@ async function closeMatchingTabs(currentTabId, windowId, url, settings) {
         (candidate) =>
           candidate.id !== currentTabId &&
           !isTabInGroup(candidate) &&
+          !isPinnedTab(candidate) &&
           !isExcludedDuplicatedTab(candidate.id, settings) &&
           isCheckableUrl(candidate.url, settings) &&
           urlsMatchForDedup(candidate.url, url, settings)
@@ -1263,7 +1269,7 @@ async function handleDuplicateNavigation(tabId, tab, url) {
     return;
   }
 
-  if (isTabInGroup(tab)) {
+  if (isTabInGroup(tab) || isPinnedTab(tab)) {
     return;
   }
 
@@ -1304,6 +1310,7 @@ async function handleDuplicateNavigation(tabId, tab, url) {
     return (
       candidate.id !== tabId &&
       !isTabInGroup(candidate) &&
+      !isPinnedTab(candidate) &&
       !processingTabs.has(candidate.id) &&
       !isExcludedDuplicatedTab(candidate.id, settings) &&
       isCheckableUrl(candidate.url, settings) &&

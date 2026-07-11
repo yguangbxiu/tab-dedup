@@ -23,7 +23,7 @@
 ## 数据流摘要
 
 1. 导航完成 → `handleDuplicateNavigation`
-2. 过滤：debounce、已拒绝、Tab 分组内、复制 Tab（若开启）、域名、空 Tab 规则
+2. 过滤：debounce、已拒绝、Tab 分组内、固定/置顶 Tab、复制 Tab（若开启）、域名、空 Tab 规则
 3. 自动分组域名：`shouldAutoGroupByDomain` → `handleAutoGroupNavigation`（静默分组，跳过提示）；允许匹配分组内 Tab 以并入已有分组
 4. 窗口内 `urlsMatchForDedup` 计数；`getSameSiteTabLimitForHostname()` 查找 per-domain 阈值（`domainTabLimits`），未命中则用全局 `sameSiteTabLimit`；`matches + 1 > limit` 才提示
 5. 注入 overlay 或降级为系统通知
@@ -35,7 +35,9 @@
 
 **Tab 分组整理**：`chrome.tabs.group` + `chrome.tabGroups.update`；导航模式将当前 Tab 与匹配 Tab 归入一组；批量模式每组独立分组。需 `tabGroups` 权限。整理成功后 Toast 约 8 秒内可点「取消」撤销（`chrome.tabs.ungroup`，内存状态 `pendingOrganizeUndo`）。
 
-**Tab 分组排除**：`isTabInGroup(tab)` 为 true 的 Tab 不参与查重（当前 Tab 在分组内直接跳过；匹配候选与批量扫描均排除分组内 Tab）。
+**Tab 排除规则**：
+- **分组内**：`isTabInGroup(tab)` 为 true 的 Tab 不参与查重（当前 Tab 在分组内直接跳过；匹配候选与批量扫描均排除分组内 Tab）
+- **固定/置顶**：`isPinnedTab(tab)`（`tab.pinned`）为 true 的 Tab 不参与查重、关闭、整理与自动分组
 
 ## 复制 Tab 识别
 
@@ -76,6 +78,9 @@ Sync v1.1.0 features into README and add change log in PROJECT-MAINTENANCE.md.
 ```
 
 ## 变更记录
+
+### 2026-07-11
+- **[优化]** 固定/置顶 Tab（`tab.pinned`）不参与重复域名检测：导航查重、批量扫描、清理、整理与自动分组均排除；新增 `isPinnedTab()` 辅助函数
 
 ### 2026-07-10
 - **[新增]** 配置项 `domainTabLimits`：按行 `域名或URL,阈值` 为指定域名自定义同站点 Tab 提醒阈值，覆盖全局 `sameSiteTabLimit`；导航查重、自动分组与批量扫描均尊重 per-domain 阈值（批量扫描未配置域名 fallback 1）
