@@ -18,6 +18,7 @@
   let toastTimer = null;
   let promptGeneration = 0;
   let promptKeydownHandler = null;
+  let promptHovered = false;
 
   function removeToast() {
     if (toastTimer) {
@@ -32,6 +33,7 @@
 
   function removeOverlay() {
     promptGeneration += 1;
+    promptHovered = false;
     if (countdownTimer) {
       clearInterval(countdownTimer);
       countdownTimer = null;
@@ -46,7 +48,29 @@
     }
   }
 
+  function isEditableTarget(target) {
+    if (!target || target.nodeType !== 1) {
+      return false;
+    }
+    if (target.isContentEditable) {
+      return true;
+    }
+    const tag = target.tagName;
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+  }
+
+  // 只有鼠标停在卡片上时才响应快捷键，避免抢占页面自身的按键（输入、Esc 等）
   function handlePromptKeydown(event) {
+    if (!promptHovered || event.defaultPrevented || event.isComposing) {
+      return;
+    }
+    if (event.metaKey || event.ctrlKey || event.altKey) {
+      return;
+    }
+    if (isEditableTarget(event.target)) {
+      return;
+    }
+
     const key = event.key;
     if (key === '1' || key === 'c' || key === 'C') {
       event.preventDefault();
@@ -176,6 +200,15 @@
         }, 1000);
       }
     }
+
+    // hover 状态仅用于开启快捷键响应，不改变倒计时与自动执行节奏
+    banner.addEventListener('mouseenter', () => {
+      promptHovered = true;
+    });
+
+    banner.addEventListener('mouseleave', () => {
+      promptHovered = false;
+    });
   }
 
   function showSwitchToast(payload) {
@@ -184,14 +217,58 @@
     const durationMs = payload.durationMs || 1500;
     const host = document.createElement('div');
     host.id = 'tab-dedup-toast-host';
-    if (payload.showUndoButton) {
-      host.className = 'tab-dedup-toast-interactive';
-    }
 
     const toast = document.createElement('div');
     toast.className = 'tab-dedup-toast';
 
+    let remainingMs = durationMs;
+    let startedAt = 0;
+    let paused = false;
+    let dismissing = false;
+
+    const dismissToast = () => {
+      if (dismissing) {
+        return;
+      }
+      dismissing = true;
+      if (toastTimer) {
+        clearTimeout(toastTimer);
+        toastTimer = null;
+      }
+      toast.classList.add('tab-dedup-toast-out');
+      toastTimer = setTimeout(removeToast, 180);
+    };
+
+    const startTimer = (ms) => {
+      startedAt = Date.now();
+      toastTimer = setTimeout(dismissToast, ms);
+    };
+
+    const pauseTimer = () => {
+      if (paused || dismissing || !toastTimer) {
+        return;
+      }
+      paused = true;
+      clearTimeout(toastTimer);
+      toastTimer = null;
+      remainingMs = Math.max(0, remainingMs - (Date.now() - startedAt));
+    };
+
+    const resumeTimer = () => {
+      if (!paused || dismissing) {
+        return;
+      }
+      paused = false;
+      if (remainingMs > 0) {
+        startTimer(remainingMs);
+      } else {
+        dismissToast();
+      }
+    };
+
     if (payload.showUndoButton) {
+      toast.classList.add('tab-dedup-toast-undo');
+
       const message = document.createElement('span');
       message.className = 'tab-dedup-toast-message';
       message.textContent = payload.message || '操作已完成';
@@ -205,12 +282,20 @@
       undoBtn.className = 'tab-dedup-toast-btn';
       undoBtn.textContent = '取消';
       undoBtn.addEventListener('click', () => {
+        paused = true;
+        dismissing = true;
         removeToast();
         chrome.runtime.sendMessage({ type: 'DEDUP_UNDO_ORGANIZE' });
       });
 
       actions.appendChild(undoBtn);
       toast.appendChild(actions);
+
+      // 指针停在「取消」上时暂停自动消失，保证撤销机会不会被计时抢走
+      actions.addEventListener('mouseenter', pauseTimer);
+      actions.addEventListener('mouseleave', resumeTimer);
+      actions.addEventListener('focusin', pauseTimer);
+      actions.addEventListener('focusout', resumeTimer);
     } else {
       toast.textContent = payload.message || '操作已完成';
     }
@@ -218,10 +303,7 @@
     host.appendChild(toast);
     document.documentElement.appendChild(host);
 
-    toastTimer = setTimeout(() => {
-      toast.classList.add('tab-dedup-toast-out');
-      toastTimer = setTimeout(removeToast, 200);
-    }, durationMs);
+    startTimer(remainingMs);
   }
 
   function bindOverlay() {

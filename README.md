@@ -268,13 +268,13 @@ Service Worker 监听以下事件以覆盖不同类型的页面跳转：
 
 #### 页面浮动卡片（`src/content/overlay.js`）
 
-- 通过独立 host 元素 + `all: initial` 样式重置，减少对页面样式的干扰
-- 接收 `SHOW_DEDUP_PROMPT` 消息，渲染半透明浮动卡片（默认右上角、小尺寸）
-- 位置与大小可在设置页配置；host 层 `pointer-events: none`，仅卡片可交互
-- **键盘快捷键**（仅页面卡片）：`1` / `C` → 清理；`2` / `G` → 整理；`3` / `N` / `Esc` → 忽略
+- 通过独立 host 元素 + `all: initial` 样式重置，减少对页面样式的干扰；卡片内文字样式显式声明，避免被站点自身的 `p` / `span` 规则改写
+- 接收 `SHOW_DEDUP_PROMPT` 消息，渲染深色半透明浮动卡片（默认右上角、小尺寸），只占局部区域
+- 位置与大小可在设置页配置；host 层与 Toast 层均为 `pointer-events: none`，只有卡片/按钮接收鼠标事件，页面其余区域的点击、滚动、输入照常可用
+- **键盘快捷键**（仅鼠标悬停在卡片上时生效）：`1` / `C` → 清理；`2` / `G` → 整理；`3` / `N` / `Esc` → 忽略；未悬停时不拦截页面按键
 - 倒计时结束后按「超时默认操作」自动发送对应 choice（默认 `close`）
 - 用户选择通过 `DEDUP_USER_CHOICE` 消息回传 Service Worker
-- 整理成功 Toast 可点「取消」，通过 `DEDUP_UNDO_ORGANIZE` 消息触发 `chrome.tabs.ungroup` 重新展开 Tab（约 8 秒有效）
+- 整理成功 Toast 固定在右下角、不铺满页面，可点「取消」通过 `DEDUP_UNDO_ORGANIZE` 消息触发 `chrome.tabs.ungroup` 重新展开 Tab（约 8 秒有效）；指针停在「取消」上时暂停自动消失
 
 **Popup 快捷操作**（`popup.js` → `QUICK_ACTION` 消息）：
 

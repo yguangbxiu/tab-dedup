@@ -1,3 +1,4 @@
+/* 页面浮动卡片定位层：铺满视口但完全不接收鼠标事件，只有卡片本体可交互 */
 #tab-dedup-overlay-host {
   all: initial;
   position: fixed;
@@ -46,36 +47,60 @@
 .tab-dedup-banner {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   pointer-events: auto;
   width: auto;
   flex-shrink: 0;
-  border-radius: 10px;
-  background: rgba(26, 86, 219, 0.88);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: #ffffff;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  background: rgba(28, 31, 38, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  color: #f4f5f7;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  animation: tab-dedup-banner-in 0.16s ease;
+}
+
+@keyframes tab-dedup-banner-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tab-dedup-size-small {
-  max-width: min(320px, calc(100vw - 24px));
+  max-width: min(300px, calc(100vw - 24px));
   padding: 8px 10px;
 }
 
 .tab-dedup-size-medium {
-  max-width: min(360px, calc(100vw - 24px));
-  padding: 10px 14px;
+  max-width: min(340px, calc(100vw - 24px));
+  padding: 9px 12px;
 }
 
 .tab-dedup-size-large {
-  max-width: min(440px, calc(100vw - 24px));
-  padding: 12px 16px;
+  max-width: min(400px, calc(100vw - 24px));
+  padding: 10px 14px;
 }
 
 .tab-dedup-text {
   flex: 1;
   min-width: 0;
+}
+
+/* 显式声明文字样式，避免被站点自身的 p / span 规则改写（如颜色、字体、对齐） */
+.tab-dedup-title,
+.tab-dedup-subtitle {
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  text-shadow: none;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .tab-dedup-size-small .tab-dedup-title {
@@ -86,21 +111,21 @@
 }
 
 .tab-dedup-size-medium .tab-dedup-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 2px;
+  line-height: 1.4;
+}
+
+.tab-dedup-size-large .tab-dedup-title {
   font-size: 13px;
   font-weight: 600;
   margin: 0 0 3px;
   line-height: 1.4;
 }
 
-.tab-dedup-size-large .tab-dedup-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 4px;
-  line-height: 1.4;
-}
-
 .tab-dedup-subtitle {
-  opacity: 0.9;
+  color: rgba(244, 245, 247, 0.68);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -112,7 +137,7 @@
 }
 
 .tab-dedup-size-medium .tab-dedup-subtitle {
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .tab-dedup-size-large .tab-dedup-subtitle {
@@ -127,60 +152,62 @@
 }
 
 .tab-dedup-btn {
-  border: none;
-  border-radius: 6px;
+  border: 1px solid transparent;
+  border-radius: 5px;
   font-weight: 500;
+  font-family: inherit;
   cursor: pointer;
-  transition: background 0.15s ease;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .tab-dedup-size-small .tab-dedup-btn {
-  padding: 5px 10px;
+  padding: 4px 9px;
   font-size: 11px;
 }
 
 .tab-dedup-size-medium .tab-dedup-btn {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+
+.tab-dedup-size-large .tab-dedup-btn {
   padding: 6px 12px;
   font-size: 12px;
 }
 
-.tab-dedup-size-large .tab-dedup-btn {
-  padding: 8px 14px;
-  font-size: 13px;
-}
-
 .tab-dedup-btn-primary {
-  background: #ffffff;
-  color: #1a56db;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1b1f27;
 }
 
 .tab-dedup-btn-primary:hover {
-  background: #f0f4ff;
+  background: #ffffff;
 }
 
 .tab-dedup-btn-secondary {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .tab-dedup-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #ffffff;
 }
 
+/* Toast：贴右下角的小卡片，默认不接收鼠标事件，仅操作按钮可点 */
 #tab-dedup-toast-host {
   all: initial;
   position: fixed;
-  inset: 0;
+  right: 16px;
+  bottom: 16px;
   z-index: 2147483647;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   pointer-events: none;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-#tab-dedup-toast-host.tab-dedup-toast-interactive {
-  pointer-events: auto;
 }
 
 #tab-dedup-toast-host * {
@@ -188,61 +215,77 @@
 }
 
 .tab-dedup-toast {
-  max-width: min(420px, calc(100vw - 48px));
-  padding: 16px 24px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.92);
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.5;
-  text-align: center;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(340px, calc(100vw - 32px));
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(28, 31, 38, 0.84);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  color: #f4f5f7;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  pointer-events: none;
   opacity: 0;
-  transform: translateY(8px) scale(0.98);
-  animation: tab-dedup-toast-in 0.2s ease forwards;
+  transform: translateY(6px);
+  animation: tab-dedup-toast-in 0.18s ease forwards;
+}
+
+.tab-dedup-toast.tab-dedup-toast-undo {
+  padding-right: 8px;
 }
 
 .tab-dedup-toast-message {
   display: block;
+  flex: 1;
+  min-width: 0;
 }
 
 .tab-dedup-toast-actions {
-  margin-top: 12px;
   display: flex;
-  justify-content: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .tab-dedup-toast-btn {
-  padding: 6px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  pointer-events: auto;
+  padding: 3px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 5px;
+  background: transparent;
   color: #ffffff;
-  font-size: 14px;
+  font-family: inherit;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .tab-dedup-toast-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.34);
 }
 
 .tab-dedup-toast.tab-dedup-toast-out {
-  animation: tab-dedup-toast-out 0.2s ease forwards;
+  animation: tab-dedup-toast-out 0.18s ease forwards;
 }
 
 @keyframes tab-dedup-toast-in {
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 @keyframes tab-dedup-toast-out {
   to {
     opacity: 0;
-    transform: translateY(-6px) scale(0.98);
+    transform: translateY(4px);
   }
 }

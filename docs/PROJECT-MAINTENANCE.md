@@ -79,6 +79,11 @@ Sync v1.1.0 features into README and add change log in PROJECT-MAINTENANCE.md.
 
 ## 变更记录
 
+### 2026-10-26
+- **[优化]** 提示改为弱影响浮层：Toast 从全屏居中遮罩改为右下角小卡片，`#tab-dedup-toast-host` 常驻 `pointer-events: none`，仅「取消」按钮接收点击，页面其余区域的点击/滚动/输入不再被拦截
+- **[优化]** 页面浮动卡片视觉收紧：中性深色玻璃底、更小字号与内边距、柔和阴影；卡片内文字显式声明 color/font，避免被站点 `p` 规则改成低对比色
+- **[优化]** 横幅键盘快捷键改为仅在鼠标悬停卡片时响应，并跳过可编辑元素与组合键，不再全局 `preventDefault` 吞掉页面按键
+
 ### 2026-07-11
 - **[优化]** 固定/置顶 Tab（`tab.pinned`）不参与重复域名检测：导航查重、批量扫描、清理、整理与自动分组均排除；新增 `isPinnedTab()` 辅助函数
 
